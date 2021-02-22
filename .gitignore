@@ -1,3 +1,8 @@
+src/
+src_asterisk/
+*.wav
+*.rar
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
