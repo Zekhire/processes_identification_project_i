@@ -7,19 +7,19 @@ import time
 
 def load_wav(input_path):
     audio = wave.read(input_path)
-    samples = np.array(audio[1], dtype=float)
+    samples = audio[1]
     Fs = audio[0]
     samples = scaling_down(samples)
     return samples, Fs
 
 
 def scaling_down(x):
-    x_scaled = x/max(abs(x))
+    x_scaled = x/float(2**15)
     return x_scaled
 
 
 def save_audios(output_path, samples, Fs):
-    samples = scaling_down(samples)
+    # samples = scaling_down(samples)
     wave.write(output_path, Fs, samples)
     
 
@@ -43,7 +43,7 @@ def project_i(y, r, debug=False):
 
     for i in range(len(y)):
         # EWLS
-        # print(np.squeeze(np.array(np.transpose(theta_dash))))
+        print(np.squeeze(np.array(np.transpose(theta_dash))))
 
         if i > 0:
             fi    = np.matrix(np.roll(np.array(fi), 1))
@@ -77,11 +77,11 @@ def project_i(y, r, debug=False):
         je    = np.roll(je, 1)
         je[0] = je_i**2
 
-        # y[i] = y_asterisk[i]
-        epsilon    = y[i] - np.transpose(fi)*theta_dash
-        k          = P_wave*fi/(1+np.transpose(fi)*P_wave*fi)
+        y[i] = y_asterisk[i]
+        epsilon    = y[i] - np.array(np.transpose(fi)*theta_dash)[0][0]
+        k          = P_wave*fi/(1 + np.transpose(fi)*P_wave*fi)
         theta_dash = theta_dash + k*epsilon
-        P_wave     = L*(P_wave - (P_wave*fi*np.transpose(fi)*P_wave)/(1+(np.transpose(fi)*P_wave*fi)))*L
+        P_wave     = L*(P_wave - (P_wave*fi*np.transpose(fi)*P_wave)/(1 + (np.transpose(fi)*P_wave*fi)))*L
 
     print(np.squeeze(np.array(np.transpose(theta_dash))))
     return y_asterisk
